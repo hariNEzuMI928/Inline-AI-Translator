@@ -1,0 +1,41 @@
+{
+  "manifest_version": 3,
+  "name": "AI翻訳",
+  "version": "3.0",
+  "description": "AIを活用してテキストを多言語に翻訳します。ショートカットや検索窓からシームレスに利用できます。",
+  "permissions": ["scripting", "clipboardWrite"],
+  "host_permissions": ["<all_urls>"],
+  "background": {
+    "service_worker": "src/background/background.js",
+    "type": "module"
+  },
+  "action": {
+    "default_popup": "src/popup/popup.html"
+  },
+  "icons": {
+    "16": "src/assets/images/icon16.png",
+    "48": "src/assets/images/icon48.png",
+    "128": "src/assets/images/icon128.png"
+  },
+  "commands": {
+    "translate_to_english": {
+      "suggested_key": {
+        "default": "Ctrl+A"
+      },
+      "description": "Translate selected text to English/Japanese"
+    },
+    "translate_to_german": {
+      "suggested_key": {
+        "default": "Ctrl+D"
+      },
+      "description": "Translate selected text to German/Japanese"
+    }
+  },
+  "omnibox": { "keyword": "tr" },
+  "web_accessible_resources": [
+    {
+      "resources": ["src/content/injection.css", "src/shared/error-handler.js", "src/content/inpage-lexical-replace.js"],
+      "matches": ["<all_urls>"]
+    }
+  ]
+}

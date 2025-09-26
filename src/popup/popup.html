@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>AI翻訳</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body>
+    <h3>翻訳したいテキストを入力</h3>
+    <textarea id="japanese-input" rows="4"></textarea>
+
+    <div class="controls">
+      <select id="language-select">
+        <option value="English" selected>英語</option>
+        <option value="German">ドイツ語</option>
+        <!-- 将来、言語を追加する場合はここに<option>を追加するだけ -->
+      </select>
+      <button id="translate-button">翻訳</button>
+    </div>
+
+    <hr />
+
+    <h3>翻訳結果</h3>
+    <div id="translation-output" class="output-area"></div>
+    <button id="copy-button" style="display: none">コピー</button>
+
+    <script src="popup.js" type="module"></script>
+  </body>
+</html>
