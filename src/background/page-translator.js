@@ -48,7 +48,7 @@ function getTargetLanguage(command) {
 
 async function initiatePageTranslation(targetLanguage) {
   const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-  if (!tab?.id) return;
+  if (!tab?.id || tab.url?.startsWith("chrome://")) return; // 拡張機能のページではスクリプトを実行しない
 
   if (await removeInjectionUI(tab.id)) return;
 

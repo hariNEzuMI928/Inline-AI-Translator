@@ -5,19 +5,44 @@ import {
 } from "../shared/error-handler.js";
 
 document.addEventListener("DOMContentLoaded", () => {
-  const translateButton = document.getElementById("translate-button");
+  const actionButton = document.getElementById("translate-button"); // This button will act as both translate and copy
   const japaneseInput = document.getElementById("japanese-input");
   const languageSelect = document.getElementById("language-select");
   const translationOutput = document.getElementById("translation-output");
-  const copyButton = document.getElementById("copy-button");
 
-  translateButton.addEventListener("click", handleTranslateClick);
-  copyButton.addEventListener("click", handleCopyClick);
+  japaneseInput.focus(); // Focus on the input field when the popup opens
 
-  function setOutput(message, showCopy = false) {
+  actionButton.addEventListener("click", handleActionButtonClick);
+  japaneseInput.addEventListener("input", handleInput); // Listen for input changes to reset button
+  japaneseInput.addEventListener("keydown", handleKeyDown); // Listen for keyboard shortcuts
+
+  let currentMode = "translate"; // "translate" or "copy"
+
+  function setOutput(message) {
     translationOutput.textContent = message;
-    copyButton.style.display = showCopy ? "inline-block" : "none";
-    copyButton.textContent = "コピー";
+  }
+
+  function setMode(mode) {
+    currentMode = mode;
+    if (mode === "translate") {
+      actionButton.textContent = "翻訳";
+    } else if (mode === "copy") {
+      actionButton.textContent = "コピー";
+    }
+  }
+
+  function handleActionButtonClick() {
+    if (currentMode === "translate") {
+      handleTranslateClick();
+    } else {
+      handleCopyClick();
+    }
+  }
+
+  function handleInput() {
+    // When input changes, revert to translate mode
+    setMode("translate");
+    setOutput(""); // Clear previous translation output
   }
 
   async function handleTranslateClick() {
@@ -31,11 +56,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     try {
       const translation = await translateText(japaneseText, targetLanguage);
-      setOutput(translation, true);
+      setOutput(translation);
+      setMode("copy");
     } catch (error) {
       const userMessage = getUserFriendlyErrorMessage(error);
       setOutput(userMessage);
       logDetailedError(error, "Popup");
+      setMode("translate"); // Revert to translate mode on error
     }
   }
 
@@ -45,14 +72,22 @@ document.addEventListener("DOMContentLoaded", () => {
       navigator.clipboard
         .writeText(textToCopy)
         .then(() => {
-          copyButton.textContent = "コピーしました！";
+          actionButton.textContent = "コピーしました！"; // Temporarily change button text
           setTimeout(() => {
-            copyButton.textContent = "コピー";
+            setMode("copy"); // Revert to copy mode after a delay
           }, 2000);
         })
         .catch((err) => {
           console.error("コピーに失敗しました", err);
+          setMode("copy"); // Ensure button is still in copy mode on error
         });
+    }
+  }
+
+  function handleKeyDown(event) {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault(); // Prevent new line in textarea
+      handleActionButtonClick();
     }
   }
 });
